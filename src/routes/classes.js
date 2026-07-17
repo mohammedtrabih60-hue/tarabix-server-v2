@@ -4,16 +4,14 @@ const role   = require('../middleware/role');
 const { db } = require('../config/firebase');
 const { uuid, now, ok, err, serverErr } = require('../utils/helpers');
 
-// GET /api/classes
 router.get('/', auth, async (req, res) => {
   try {
     const snap = await db().collection('classes')
-      .where('schoolId', '==', req.schoolId)..get();
+      .where('schoolId', '==', req.schoolId).get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });
 
-// POST /api/classes
 router.post('/', auth, role('director', 'admin'), async (req, res) => {
   try {
     const { name } = req.body;
@@ -25,7 +23,6 @@ router.post('/', auth, role('director', 'admin'), async (req, res) => {
   } catch (e) { serverErr(res, e); }
 });
 
-// DELETE /api/classes/:id
 router.delete('/:id', auth, role('director', 'admin'), async (req, res) => {
   try {
     await db().collection('classes').doc(req.params.id).delete();
@@ -33,7 +30,6 @@ router.delete('/:id', auth, role('director', 'admin'), async (req, res) => {
   } catch (e) { serverErr(res, e); }
 });
 
-// PATCH /api/classes/:id/homeroom — assign homeroom teacher
 router.patch('/:id/homeroom', auth, role('director', 'admin'), async (req, res) => {
   try {
     const { teacherId, teacherName, teacherPhoto, teacherPhone } = req.body;
@@ -48,7 +44,6 @@ router.patch('/:id/homeroom', auth, role('director', 'admin'), async (req, res) 
   } catch (e) { serverErr(res, e); }
 });
 
-// POST /api/classes/improvement-request — student sends to homeroom
 router.post('/improvement-request', auth, role('student'), async (req, res) => {
   try {
     const { subject, currentUnits, targetUnits, classId } = req.body;
@@ -59,13 +54,14 @@ router.post('/improvement-request', auth, role('student'), async (req, res) => {
     const id = uuid();
     const faniya = {
       id, type: 'improvement',
-      subject: `🎯 בקשת שיפור יחידות - ${subject}`,
+      subject: `בקשת שיפור יחידות - ${subject}`,
       studentId: req.userId, studentName: req.user.name || '',
       classId, schoolId: req.schoolId,
       targetTeacherId: homeroomId || null,
       currentUnits, targetUnits,
       messages: [{
-        id: uuid(), text: `הסטודנט מבקש לשפר מ-${currentUnits} ל-${targetUnits} יחידות ב${subject}`,
+        id: uuid(),
+        text: `הסטודנט מבקש לשפר מ-${currentUnits} ל-${targetUnits} יחידות ב${subject}`,
         isTeacher: false, senderName: req.user.name || '', sentAt: now(),
       }],
       status: 'open', createdAt: now(), updatedAt: now(),
