@@ -7,7 +7,7 @@ router.get('/', auth, async (req, res) => {
   try {
     let q = db().collection('assignments').where('schoolId', '==', req.schoolId);
     if (req.query.classId) q = q.where('classId', '==', req.query.classId);
-    const snap = await q.orderBy('createdAt', 'desc').get();
+    const snap = await q.get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });

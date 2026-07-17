@@ -9,7 +9,7 @@ router.get('/', auth, async (req, res) => {
     if (req.query.studentId) q = q.where('studentId', '==', req.query.studentId);
     if (req.query.classId)   q = q.where('classId',   '==', req.query.classId);
     if (req.query.subject)   q = q.where('subject',   '==', req.query.subject);
-    const snap = await q.orderBy('date', 'desc').limit(500).get();
+    const snap = await q.get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });

@@ -7,7 +7,7 @@ router.get('/', auth, async (req, res) => {
   try {
     let q = db().collection('group_chat').where('schoolId', '==', req.schoolId);
     if (req.query.classId) q = q.where('classId', '==', req.query.classId);
-    const snap = await q.orderBy('sentAt', 'desc').limit(100).get();
+    const snap = await q.get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })).reverse());
   } catch (e) { serverErr(res, e); }
 });

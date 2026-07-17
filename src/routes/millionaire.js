@@ -51,7 +51,7 @@ router.get('/leaderboard', auth, async (req, res) => {
   try {
     const snap = await db().collection('millionaire_scores')
       .where('schoolId', '==', req.schoolId)
-      .orderBy('score', 'desc').limit(20).get();
+      .get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });

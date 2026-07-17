@@ -7,7 +7,7 @@ router.get('/', auth, async (req, res) => {
   try {
     const snap = await db().collection('faniyot')
       .where('schoolId', '==', req.schoolId)
-      .orderBy('createdAt', 'desc').limit(200).get();
+      .get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });
