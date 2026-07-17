@@ -8,7 +8,7 @@ const { uuid, now, ok, err, serverErr } = require('../utils/helpers');
 router.get('/', auth, async (req, res) => {
   try {
     const snap = await db().collection('classes')
-      .where('schoolId', '==', req.schoolId).orderBy('name').get();
+      .where('schoolId', '==', req.schoolId)..get();
     ok(res, snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) { serverErr(res, e); }
 });
